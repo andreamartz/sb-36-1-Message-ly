@@ -1,16 +1,45 @@
 /** User class for message.ly */
-
-
+const bcrypt = require("bcrypt");
+const { DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
+const db = require("../db");
 
 /** User of the site. */
 
 class User {
-
+  constructor({ username, password, firstName, lastName, phone }) {
+    this.username = username;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.phone = phone;
+  }
   /** register new user -- returns
    *    {username, password, first_name, last_name, phone}
    */
 
-  static async register({username, password, first_name, last_name, phone}) { }
+  static async register({ username, password, firstName, lastName, phone }) {
+    // hash the password
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    console.log(hashedPassword);
+
+    // save the new user to the database
+    const results = await db.query(`
+      INSERT INTO users (
+        username, 
+        password, 
+        first_name, 
+        last_name, 
+        phone, 
+        join_at,
+        last_login_at)
+      VALUES ($1, $2, $3, $4, $5, LOCALTIMESTAMP, CURRENT_TIMESTAMP)
+      RETURNING username`,
+      [username, hashedPassword, firstName, lastName, phone]
+    );
+    console.log("results.rows: ", results.rows);
+    console.log("results.rows[0]: ", results.rows[0]);
+    return results.rows[0];
+  }
 
   /** Authenticate: is this username/password valid? Returns boolean. */
 
