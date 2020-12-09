@@ -33,7 +33,7 @@ class User {
         join_at,
         last_login_at)
       VALUES ($1, $2, $3, $4, $5, LOCALTIMESTAMP, CURRENT_TIMESTAMP)
-      RETURNING username`,
+      RETURNING username, password, first_name, last_name, phone`,
       [username, hashedPassword, firstName, lastName, phone]
     );
     console.log("results.rows: ", results.rows);
