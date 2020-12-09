@@ -24,8 +24,13 @@ const User = require("../models/user");
       if (!username || !password) {
         throw new ExpressError("Username, password, first name, last name, and phone number are required.", 400);
       }
+      // register user
       const result = await User.register({ username, password, firstName, lastName, phone });
-      console.log("results from auth route: ", result);
+
+      // log user in
+
+      // return token
+      
       return res.json(result);
     } catch (err) {
       console.log(err);
