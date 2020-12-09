@@ -20,7 +20,6 @@ class User {
   static async register({ username, password, firstName, lastName, phone }) {
     // hash the password
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    console.log(hashedPassword);
 
     // save the new user to the database
     const results = await db.query(`
@@ -36,8 +35,6 @@ class User {
       RETURNING username, password, first_name, last_name, phone`,
       [username, hashedPassword, firstName, lastName, phone]
     );
-    console.log("results.rows: ", results.rows);
-    console.log("results.rows[0]: ", results.rows[0]);
     return results.rows[0];
   }
 
