@@ -10,6 +10,9 @@ const User = require("../models/user");
  *
  **/
 
+ // try to find the user
+   // if found, compare hashed pw to hash of login pw
+
 
 /** POST /register - register user: registers, logs in, and returns token.
  *
@@ -18,27 +21,27 @@ const User = require("../models/user");
  *  Make sure to update their last-login!
  */
 
-  router.post('/register', async (req, res, next) => {
-    try {
-      const { username, password, firstName, lastName, phone } = req.body;
-      if (!username || !password) {
-        throw new ExpressError("Username, password, first name, last name, and phone number are required.", 400);
-      }
-      // register user
-      const result = await User.register({ username, password, firstName, lastName, phone });
-
-      // log user in
-
-      // return token
-      
-      return res.json(result);
-    } catch (err) {
-      console.log(err);
-      if(err.code === '23505') {
-        return next(new ExpressError("Username taken; please choose another.", 400));
-      }
-      return next(err);
+router.post('/register', async (req, res, next) => {
+  try {
+    const { username, password, firstName, lastName, phone } = req.body;
+    if (!username || !password) {
+      throw new ExpressError("Username, password, first name, last name, and phone number are required.", 400);
     }
-  });
+    // register user
+    const result = await User.register({ username, password, firstName, lastName, phone });
+
+    // log user in
+
+    // return token
+
+    return res.json(result);
+  } catch (err) {
+    console.log(err);
+    if(err.code === '23505') {
+      return next(new ExpressError("Username taken; please choose another.", 400));
+    }
+    return next(err);
+  }
+});
 
  module.exports = router;
