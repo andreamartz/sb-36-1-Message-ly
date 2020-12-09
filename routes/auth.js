@@ -2,10 +2,12 @@ const express = require("express");
 const router = new express.Router();
 const ExpressError = require("../expressError");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+
 
 
 const bcrypt = require("bcrypt");
-const { DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
+const { SECRET_KEY, DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
 const db = require("../db");
 
 /** POST /login - login: {username, password} => {token}
@@ -35,7 +37,8 @@ router.post('/login', async (req, res, next) => {
     if (user) {
       const pwMatch = await bcrypt.compare(password, user.password);
       if (pwMatch) {
-        return res.json({ message: "Logged in!" });
+        const token = jwt.sign({ username }, SECRET_KEY);
+        return res.json({ message: "Logged in!", token });
       }
     }
     // throw error if user not found or password not verified
