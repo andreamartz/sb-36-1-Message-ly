@@ -1,5 +1,6 @@
 const express = require("express");
 const router = new express.Router();
+const User = require("../models/user");
 
 /******************************************
  * 
@@ -8,6 +9,14 @@ const router = new express.Router();
  * => {users: [{username, first_name, last_name, phone}, ...]}
  *
  ******************************************/
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await User.all();
+    return res.json(users);
+  } catch(err) {
+    next(err)
+  }
+});
 
 /******************************************
  * 
