@@ -17,16 +17,22 @@ const jwt = require("jsonwebtoken");
 
 router.post('/login', async (req, res, next) => {
   try {
+    // get the user data sent with the request
     const { username, password } = req.body;
+
+    // if any necessary data are missing, throw an error
     if (!username || !password) {
       throw new ExpressError("Username and password required", 400);
     }
 
+    // authenticate the user using the User.authenticate method
     const isAuthenticated = await User.authenticate(username, password);
 
+    // if the user is authenticated, create and return a signed token
     if (isAuthenticated) {
       const token = jwt.sign({ username }, SECRET_KEY);
       return res.json({ message: "Logged in!", token });
+    // if user not authenticated, throw an error
     } else {
       throw new ExpressError("Invalid username or password", 400);
     }
