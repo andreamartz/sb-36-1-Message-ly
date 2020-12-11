@@ -44,6 +44,8 @@ class User {
       RETURNING username, password, first_name, last_name, phone`,
       [username, hashedPassword, firstName, lastName, phone]
     );
+
+    // return the object with user data on it
     return results.rows[0];
   }
 
@@ -69,6 +71,7 @@ class User {
     // compare hashed pw to hash of login pw
     const pwMatch = await bcrypt.compare(password, user.password);
 
+    // return a boolean: true only if (1) user was found AND (2) password is correct
     return user && pwMatch;
   }
 
