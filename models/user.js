@@ -106,7 +106,20 @@ class User {
    * 
    **************************************************/
 
-  static async all() { }
+  static async all() { 
+    // db query to get all users
+    const results = await db.query(`
+      SELECT username, 
+             first_name, 
+             last_name, 
+             phone
+      FROM users
+      ORDER BY username
+    `)
+
+    // return all rows of the result as objects in an array
+    return results.rows;
+  }
 
   /** Get: get user by username
    *
