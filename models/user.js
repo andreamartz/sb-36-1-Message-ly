@@ -4,8 +4,11 @@ const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 const ExpressError = require("../expressError");
 
-
-/** User of the site. */
+  /**************************************************
+   * 
+   * /** User of the site. 
+   * 
+   **************************************************/
 
 class User {
   constructor({ username, password, firstName, lastName, phone }) {
@@ -15,9 +18,13 @@ class User {
     this.lastName = lastName;
     this.phone = phone;
   }
-  /** register new user -- returns
+
+  /**************************************************
+   * 
+   * register new user -- returns
    *    {username, password, first_name, last_name, phone}
-   */
+   * 
+   **************************************************/
 
   static async register({ username, password, firstName, lastName, phone }) {
     // hash the password
@@ -40,7 +47,13 @@ class User {
     return results.rows[0];
   }
 
-  /** Authenticate: is this username/password valid? Returns boolean. */
+  /**************************************************
+   * 
+   * Authenticate: is this username/password valid? 
+   * 
+   * Returns boolean. 
+   * 
+   **************************************************/
 
   static async authenticate(username, password) { 
     // try to find the user
@@ -59,12 +72,21 @@ class User {
     return user && pwMatch;
   }
 
-  /** Update last_login_at for user */
+  /**************************************************
+   * 
+   * Update last_login_at for user
+   * 
+   **************************************************/
 
   static async updateLoginTimestamp(username) { }
 
-  /** All: basic info on all users:
-   * [{username, first_name, last_name, phone}, ...] */
+  /**************************************************
+   * 
+   * All: basic info on all users:
+   * 
+   * [{username, first_name, last_name, phone}, ...]
+   * 
+   **************************************************/
 
   static async all() { }
 
@@ -79,23 +101,32 @@ class User {
 
   static async get(username) { }
 
-  /** Return messages from this user.
+
+
+  
+  /**************************************************
+   * 
+   * Return messages from this user.
    *
    * [{id, to_user, body, sent_at, read_at}]
    *
    * where to_user is
    *   {username, first_name, last_name, phone}
-   */
+   * 
+   **************************************************/
 
   static async messagesFrom(username) { }
 
-  /** Return messages to this user.
+  /**************************************************
+   * 
+   * Return messages to this user.
    *
    * [{id, from_user, body, sent_at, read_at}]
    *
    * where from_user is
    *   {id, first_name, last_name, phone}
-   */
+   * 
+   **************************************************/
 
   static async messagesTo(username) { }
 }
