@@ -48,22 +48,38 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/register', async (req, res, next) => {
   try {
+    // get the user data sent with the request
     const { username, password, firstName, lastName, phone } = req.body;
-    if (!username || !password) {
+
+    // if any necessary data are missing, throw an error
+    if (!username || !password || !firstName || !lastName || !phone) {
       throw new ExpressError("Username, password, first name, last name, and phone number are required.", 400);
     }
-    // register user
-    const result = await User.register({ username, password, firstName, lastName, phone });
+
+    // register user using the User.register method
+    const result = await User.register({ username, 
+      password, 
+      firstName, 
+      lastName, 
+      phone }
+    );
+    console.log("result: ", result);
+    
+    // create token for the user
+    const token = jwt.sign({ username }, SECRET_KEY);
+    console.log("token: ", token);
 
     // log user in
+    const isLoggedIn = User.authenticate(username, password);
+    console.log("isLoggedIn: ", isLoggedIn);
 
     // return token
+    return res.json({ token });
 
-    return res.json(result);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     if(err.code === '23505') {
-      return next(new ExpressError("Username taken; please choose another.", 400));
+      return res.json( new ExpressError("Username taken; please choose another.", 400) );
     }
     return next(err);
   }
