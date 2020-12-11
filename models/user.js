@@ -81,7 +81,22 @@ class User {
    * 
    **************************************************/
 
-  static async updateLoginTimestamp(username) { }
+  static async updateLoginTimestamp(username) { 
+    // get user by username (use the method)
+
+    // set the last_login_at property of the user to CURRENT_TIMESTAMP in the database
+    const result = await db.query(`
+      UPDATE users
+      SET last_login_at = CURRENT_TIMESTAMP
+      WHERE username = $1
+      RETURNING username`,
+      [username]
+    );
+
+    if (!result.rows[0]) {
+      throw new ExpressError(`No such user: ${username}`, 404);
+    }
+  }
 
   /**************************************************
    * 
