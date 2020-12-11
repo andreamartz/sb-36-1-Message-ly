@@ -7,14 +7,13 @@ const jwt = require("jsonwebtoken");
 
 // const bcrypt = require("bcrypt");
 
-const { SECRET_KEY, DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
-const db = require("../db");
-
-/** POST /login - login: {username, password} => {token}
+/******************************************************
+ * 
+ * POST /login - login: {username, password} => {token}
  *
  * Make sure to update their last-login!
  *
- **/
+ ******************************************************/
 
 router.post('/login', async (req, res, next) => {
   try {
@@ -37,13 +36,15 @@ router.post('/login', async (req, res, next) => {
 });
 
 
-
-/** POST /register - register user: registers, logs in, and returns token.
+/***********************************************************
+ * 
+ * POST /register - register user: registers, logs in, and returns token.
  *
  * {username, password, first_name, last_name, phone} => {token}.
  *
  *  Make sure to update their last-login!
- */
+ * 
+ ***********************************************************/
 
 router.post('/register', async (req, res, next) => {
   try {
