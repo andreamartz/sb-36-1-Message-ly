@@ -5,8 +5,8 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
 
+// const bcrypt = require("bcrypt");
 
-const bcrypt = require("bcrypt");
 const { SECRET_KEY, DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
 const db = require("../db");
 
@@ -22,27 +22,15 @@ router.post('/login', async (req, res, next) => {
     if (!username || !password) {
       throw new ExpressError("Username and password required", 400);
     }
-    // try to find the user
-    // const result = User.authenticate(username, password);
-    const results = await db.query(`
-      SELECT username, password 
-      FROM users 
-      WHERE username = $1`, 
-      [username]
-    );
-    const user = results.rows[0];
-    console.log("user: ", user);
 
-    // if user found, compare hashed pw to hash of login pw
-    if (user) {
-      const pwMatch = await bcrypt.compare(password, user.password);
-      if (pwMatch) {
-        const token = jwt.sign({ username }, SECRET_KEY);
-        return res.json({ message: "Logged in!", token });
-      }
+    const isAuthenticated = await User.authenticate(username, password);
+
+    if (isAuthenticated) {
+      const token = jwt.sign({ username }, SECRET_KEY);
+      return res.json({ message: "Logged in!", token });
+    } else {
+      throw new ExpressError("Invalid username or password", 400);
     }
-    // throw error if user not found or password not verified
-    throw new ExpressError("Invalid username or password", 400);
   } catch (err) {
     return next(err);
   }

@@ -1,7 +1,9 @@
 /** User class for message.ly */
-const bcrypt = require("bcrypt");
-const { DB_URI, BCRYPT_WORK_FACTOR } = require("../config");
 const db = require("../db");
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config");
+const ExpressError = require("../expressError");
+
 
 /** User of the site. */
 
@@ -40,7 +42,22 @@ class User {
 
   /** Authenticate: is this username/password valid? Returns boolean. */
 
-  static async authenticate(username, password) { }
+  static async authenticate(username, password) { 
+    // try to find the user
+    const results = await db.query(`
+      SELECT password 
+      FROM users 
+      WHERE username = $1`, 
+      [username]
+    );
+    const user = results.rows[0];
+    console.log("user: ", user);
+
+    // compare hashed pw to hash of login pw
+    const pwMatch = await bcrypt.compare(password, user.password);
+
+    return user && pwMatch;
+  }
 
   /** Update last_login_at for user */
 
