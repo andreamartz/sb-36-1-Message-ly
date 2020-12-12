@@ -121,18 +121,42 @@ class User {
     return results.rows;
   }
 
-  /** Get: get user by username
+  /**************************************************
+   * 
+   * Get: get user by username
    *
    * returns {username,
    *          first_name,
    *          last_name,
    *          phone,
    *          join_at,
-   *          last_login_at } */
+   *          last_login_at } 
+   * 
+   ***************************************************/
 
-  static async get(username) { }
+  static async get(username) { 
+    // query the db to find that record
+    console.log("username: ", username);
+    const results = await db.query(`
+      SELECT username, 
+             first_name, 
+             last_name, 
+             phone, 
+             join_at, 
+             last_login_at
+      FROM users
+      WHERE username = $1`,
+      [username]
+    );
+    // if no user found, throw error
+    if (results.rows.length === 0) {
+      throw new ExpressError(`User with username ${ username } not found`, 404);
+    }
+    console.log("results.rows[0]: ", results.rows[0]);
 
-
+    // return an object with that user's data
+    return results.rows[0];
+  }
 
   
   /**************************************************
@@ -146,7 +170,40 @@ class User {
    * 
    **************************************************/
 
-  static async messagesFrom(username) { }
+  static async messagesFrom(username) {
+    console.log("messagesFrom method username: ", username);
+    const results = await db.query(`
+      SELECT m.id,
+             m.body,
+             m.sent_at,
+             m.read_at, 
+             m.to_username,
+             u.username,
+             u.first_name,
+             u.last_name,
+             u.phone
+      FROM messages AS m
+      LEFT JOIN users AS u ON m.from_username = u.username
+      WHERE m.from_username = $1`,
+      [username]
+    );
+    console.log("messagesFrom method msgs: ", results.rows);
+    // return array of message objects (NOT message instances)
+    const msgs = results.rows.map(msg => (
+      {id: msg.id,
+       to_user: { username: msg.to_username,
+                  first_name: msg.first_name,
+                  last_name: msg.last_name,
+                  phone: msg.phone 
+       }, 
+       body: msg.body, 
+       sent_at: msg.sent_at, 
+       read_at: msg.read_at
+      }
+    ));
+    return msgs;
+  }
+
 
   /**************************************************
    * 
@@ -159,8 +216,43 @@ class User {
    * 
    **************************************************/
 
-  static async messagesTo(username) { }
+  static async messagesTo(username) {
+    console.log("messagesTo method username: ", username);
+    const results = await db.query(`
+      SELECT m.id,
+            m.body,
+            m.sent_at,
+            m.read_at, 
+            m.from_username,
+            u.username,
+            u.first_name,
+            u.last_name,
+            u.phone
+      FROM messages AS m
+      LEFT JOIN users AS u ON m.to_username = u.username
+      WHERE m.to_username = $1`,
+      [username]
+    );
+    console.log("messagesTo method msgs: ", results.rows);
+    // return array of message objects (NOT message instances)
+    const msgs = results.rows.map(msg => (
+      {id: msg.id,
+      from_user: { username: msg.from_username,
+                  first_name: msg.first_name,
+                  last_name: msg.last_name,
+                  phone: msg.phone 
+      }, 
+      body: msg.body, 
+      sent_at: msg.sent_at, 
+      read_at: msg.read_at
+      }
+    ));
+    return msgs;
+  }
 }
+
+
+
 
 
 module.exports = User;

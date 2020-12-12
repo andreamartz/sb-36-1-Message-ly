@@ -77,7 +77,7 @@ router.post('/register', async (req, res, next) => {
     console.log("token: ", token);
 
     // log user in
-    const isLoggedIn = User.authenticate(username, password);
+    const isLoggedIn = await User.authenticate(username, password);
     console.log("isLoggedIn: ", isLoggedIn);
 
     // return token
