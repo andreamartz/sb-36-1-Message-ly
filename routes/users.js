@@ -33,13 +33,13 @@ router.get('/:username',
 ensureLoggedIn,
 ensureCorrectUser,
 async (req, res, next) => {
-try {
-  const { username } = req.params;
-  const user = await User.get(username);
-  return res.json({ user });
-} catch(err) {
-  next(err)
-}
+  try {
+    const { username } = req.params;
+    const user = await User.get(username);
+    return res.json({ user });
+  } catch(err) {
+    next(err)
+  }
 });
 
 /******************************************
@@ -58,7 +58,6 @@ ensureCorrectUser,
 async (req, res, next) => {
   try {
     const { username } = req.params;
-    console.log("ROUTE msgs to req: ", req.user);
     const msgs = await User.messagesTo(username);
     return res.json({ messages: msgs });
   } catch(err) {
