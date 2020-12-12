@@ -11,7 +11,7 @@ function authenticateJWT(req, res, next) {
     const payload = jwt.verify(tokenFromBody, SECRET_KEY);
     req.user = payload; // create a current user
     return next();
-  } catch (err) {
+  } catch (err) {  // 'err' in this middleware isn't an error; continue on
     return next();
   }
 }
